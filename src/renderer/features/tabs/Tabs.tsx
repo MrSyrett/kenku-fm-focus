@@ -198,10 +198,13 @@ export function Tabs() {
     dispatch(editTab({ id: tabs.selectedTab, url }));
   }
 
+  // Focus mode intentionally does NOT unmount the chrome here — the full-window
+  // web view (see getBounds) covers it. Unmounting caused remounts that re-ran
+  // one-time effects elsewhere (remote server, audio capture).
   return (
     <Stack sx={{ flexGrow: 1, minWidth: 0 }} id="controls">
-      {!settings.focusMode && <TabBar />}
-      {!settings.focusMode && settings.urlBarEnabled && !isPlayer && (
+      <TabBar />
+      {settings.urlBarEnabled && !isPlayer && (
         <URLBar
           viewId={selectedTab?.id || -1}
           url={selectedTab?.url || ""}

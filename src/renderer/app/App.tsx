@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
@@ -9,7 +9,6 @@ import Alert from "@mui/material/Alert";
 import { ActionDrawer } from "../common/ActionDrawer";
 
 import { Tabs } from "../features/tabs/Tabs";
-import { RootState } from "./store";
 import {
   setFocusMode,
   toggleFocusMode,
@@ -37,7 +36,6 @@ export function App() {
   const [fatalError, setFatalError] = useState<string>();
 
   const dispatch = useDispatch();
-  const focusMode = useSelector((state: RootState) => state.settings.focusMode);
 
   useEffect(() => {
     window.kenku.on("MESSAGE", (args) => {
@@ -104,7 +102,10 @@ export function App() {
   return (
     <Stack direction="row">
       <WallPaper />
-      {!focusMode && <ActionDrawer />}
+      {/* The drawer stays mounted in focus mode (the full-window web view simply
+          covers it). Unmounting it re-ran Settings' one-time effects — restarting
+          the remote server (EADDRINUSE) and audio capture (desktop echo). */}
+      <ActionDrawer />
       <Tabs />
       <Snackbar
         open={Boolean(message)}
